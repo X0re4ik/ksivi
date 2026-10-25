@@ -1,0 +1,5 @@
+mecanum_controller:
+  ros__parameters:
+    wheel_radius: 0.5
+    wheel_track: 1.2
+    wheel_base: 0.8

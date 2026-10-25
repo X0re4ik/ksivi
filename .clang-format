@@ -1,0 +1,10 @@
+---
+# Google C++ Style Guide: https://google.github.io/styleguide/cppguide.html
+# Источник истины для форматирования. Правила: rules/cpp-style.md
+Language: Cpp
+BasedOnStyle: Google
+Standard: c++17
+DerivePointerAlignment: false
+PointerAlignment: Left
+IncludeBlocks: Regroup
+...
