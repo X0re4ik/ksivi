@@ -26,6 +26,7 @@ set(
   KSIVI_MECANUM_CONTROL_CORE_SOURCE
   src/mecanum_controller_node.cpp
   src/mecanum_inverse_kinematics.cpp
+  src/parameter_descriptors.cpp
 )
 
 

@@ -38,14 +38,14 @@ class MecanumInverseKinematicsInterface {
 
 class MecanumInverseKinematics : public MecanumInverseKinematicsInterface {
  public:
-  MecanumInverseKinematics(double radius, double wheel_track,
+  MecanumInverseKinematics(double wheel_radius, double wheel_track,
                            double wheel_base);
 
   [[nodiscard]] WheelVelocities ComputeWheelVelocities(
       const ChassisVelocity& chassis_velocity) const override;
 
  private:
-  double radius_;
+  double wheel_radius_;
   double wheel_track_;
   double wheel_base_;
 
@@ -57,7 +57,7 @@ class MecanumInverseKinematics : public MecanumInverseKinematicsInterface {
 using MecanumInverseKinematicsPtr =
     std::unique_ptr<MecanumInverseKinematicsInterface>;
 
-MecanumInverseKinematicsPtr MakeMecanumInverseKinematics(double radius,
+MecanumInverseKinematicsPtr MakeMecanumInverseKinematics(double wheel_radius,
                                                          double wheel_track,
                                                          double wheel_base);
 

@@ -5,10 +5,10 @@
 namespace ksivi_mecanum_control {
 
 // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
-MecanumInverseKinematics::MecanumInverseKinematics(double radius,
+MecanumInverseKinematics::MecanumInverseKinematics(double wheel_radius,
                                                    double wheel_track,
                                                    double wheel_base)
-    : radius_(radius),
+    : wheel_radius_(wheel_radius),
       wheel_track_(wheel_track),
       wheel_base_(wheel_base),
       half_track_(wheel_track_ / 2.0),
@@ -23,21 +23,21 @@ WheelVelocities MecanumInverseKinematics::ComputeWheelVelocities(
 
   WheelVelocities wheel_velocities;
   wheel_velocities.front_left =
-      (linear_x + linear_y - rotation_lever_arm_ * angular_z) / radius_;
+      (linear_x + linear_y - rotation_lever_arm_ * angular_z) / wheel_radius_;
   wheel_velocities.front_right =
-      (linear_x - linear_y + rotation_lever_arm_ * angular_z) / radius_;
+      (linear_x - linear_y + rotation_lever_arm_ * angular_z) / wheel_radius_;
   wheel_velocities.back_left =
-      (linear_x - linear_y - rotation_lever_arm_ * angular_z) / radius_;
+      (linear_x - linear_y - rotation_lever_arm_ * angular_z) / wheel_radius_;
   wheel_velocities.back_right =
-      (linear_x + linear_y + rotation_lever_arm_ * angular_z) / radius_;
+      (linear_x + linear_y + rotation_lever_arm_ * angular_z) / wheel_radius_;
 
   return wheel_velocities;
 }
 
-MecanumInverseKinematicsPtr MakeMecanumInverseKinematics(double radius,
+MecanumInverseKinematicsPtr MakeMecanumInverseKinematics(double wheel_radius,
                                                          double wheel_track,
                                                          double wheel_base) {
-  return std::make_unique<MecanumInverseKinematics>(radius, wheel_track,
+  return std::make_unique<MecanumInverseKinematics>(wheel_radius, wheel_track,
                                                     wheel_base);
 }
 

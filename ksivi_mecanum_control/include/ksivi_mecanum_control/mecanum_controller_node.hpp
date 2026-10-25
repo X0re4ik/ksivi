@@ -24,6 +24,7 @@ class MecanumControllerNode : public rclcpp::Node {
       motor_speed_publisher_;
 
   rclcpp::TimerBase::SharedPtr motor_speed_timer_;
+  MecanumInverseKinematicsPtr mecanum_inverse_kinematics_;
   ChassisVelocity last_velocity_;
 };
 
