@@ -1,35 +1,66 @@
-#ifndef KSIVI_MECANUM_CONTROL_MECANUM_CONTROLLER_NODE_HPP_
-#define KSIVI_MECANUM_CONTROL_MECANUM_CONTROLLER_NODE_HPP_
+#ifndef KSIVI_MECANUM_CONTROL_MECANUM_INVERSE_KINEMATICS_HPP_
+#define KSIVI_MECANUM_CONTROL_MECANUM_INVERSE_KINEMATICS_HPP_
 
-#include <geometry_msgs/msg/twist.hpp>
 #include <memory>
-#include <rclcpp/rclcpp.hpp>
-#include <std_msgs/msg/float32_multi_array.hpp>
-
-#include "ksivi_mecanum_control/mecanum_inverse_kinematics.hpp"
 
 namespace ksivi_mecanum_control {
 
-class MecanumControllerNode : public rclcpp::Node {
- public:
-  MecanumControllerNode();
-
- private:
-  void CmdVelSubscriptionCallback(geometry_msgs::msg::Twist);
-  void SendToMotorSpeedPublisher(const ChassisVelocity& vel);
-
-  rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr
-      cmd_vel_subscription_;
-  rclcpp::Publisher<std_msgs::msg::Float32MultiArray>::SharedPtr
-      motor_speed_publisher_;
-
-  rclcpp::TimerBase::SharedPtr motor_speed_timer_;
-  ChassisVelocity last_velocity_;
+struct ChassisVelocity {
+  double vx{0.0};
+  double vy{0.0};
+  double wz{0.0};
 };
 
-using MecanumControllerNodePtr = std::shared_ptr<MecanumControllerNode>;
-MecanumControllerNodePtr MakeMecanumControllerNode();
+struct WheelVelocities {
+  double front_left{0.0};
+  double front_right{0.0};
+  double back_left{0.0};
+  double back_right{0.0};
+};
+
+class MecanumInverseKinematicsInterface {
+ public:
+  MecanumInverseKinematicsInterface() = default;
+  MecanumInverseKinematicsInterface(const MecanumInverseKinematicsInterface&) =
+      default;
+  MecanumInverseKinematicsInterface(MecanumInverseKinematicsInterface&&) =
+      default;
+  MecanumInverseKinematicsInterface& operator=(
+      const MecanumInverseKinematicsInterface&) = default;
+  MecanumInverseKinematicsInterface& operator=(
+      MecanumInverseKinematicsInterface&&) = default;
+
+  virtual ~MecanumInverseKinematicsInterface() = default;
+
+  [[nodiscard]] virtual WheelVelocities ComputeWheelVelocities(
+      const ChassisVelocity& chassis_velocity) const = 0;
+};
+
+class MecanumInverseKinematics : public MecanumInverseKinematicsInterface {
+ public:
+  MecanumInverseKinematics(double radius, double wheel_track,
+                           double wheel_base);
+
+  [[nodiscard]] WheelVelocities ComputeWheelVelocities(
+      const ChassisVelocity& chassis_velocity) const override;
+
+ private:
+  double radius_;
+  double wheel_track_;
+  double wheel_base_;
+
+  double half_track_;
+  double half_wheelbase_;
+  double rotation_lever_arm_;
+};
+
+using MecanumInverseKinematicsPtr =
+    std::unique_ptr<MecanumInverseKinematicsInterface>;
+
+MecanumInverseKinematicsPtr MakeMecanumInverseKinematics(double radius,
+                                                         double wheel_track,
+                                                         double wheel_base);
 
 }  // namespace ksivi_mecanum_control
 
-#endif  // KSIVI_MECANUM_CONTROL_MECANUM_CONTROLLER_NODE_HPP_
+#endif  // KSIVI_MECANUM_CONTROL_MECANUM_INVERSE_KINEMATICS_HPP_
